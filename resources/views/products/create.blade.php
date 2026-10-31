@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title','Add Student')
+@section('title','Add Product')
 
 @section('content')
      <div class="card">
@@ -32,22 +32,22 @@
             @enderror
             </div>
 
-       <div class="mb-3">
-         <lable class="form-label" for="brand">brand</lable>
-         <select name="brand" class="form-select">
+              <div class="mb-3">
+         <label class="form-label" for="brand_id">Brand</label>
+         <select name="brand_id" id="brand_id" class="form-select">
             <option value="">Select Brand</option>
-            <option value="sunsilk" @selected(old('brand')== 'sunsilk')>SUNSILK</option>
-            <option value="choco" @selected(old('brand')== 'choco')>CHOCO</option>
-            <option value="dishwashing" @selected(old('brand')== 'dishwashing')>DISHWASHING</option>
-            <option value="nescafe" @selected(old('brand')== 'nescafe')>NESCAFE</option>
-            <option value="mint" @selected(old('brand')== 'mint')>MINT</option>
+            @foreach ($brands as $brand)
+                <option value="{{ $brand->id }}"
+                    @selected(old('brand_id') == $brand->id)
+                >{{ $brand->name }}</option>
+            @endforeach
          </select>
-          @error('brand')
+          @error('brand_id')
                <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
        </div>
          <div class="mb-3">
-         <lable class="form-label" for="brand">package</lable>
+         <lable class="form-label" for="package">package</lable>
          <select name="package" class="form-select">
             <option value="">Select Package</option>
             <option value="bottle" @selected(old('package')== 'bottle')>BOTTLE</option>

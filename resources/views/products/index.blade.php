@@ -4,8 +4,8 @@
 @section('content')
 
 <div class="d-flex justify-content-between align-items-center mb-3">
- <h3>Products in my Store</h3>
-    <p>Prepared by: Jayvee Espanola Alapide</p>
+ <h3>Products</h3>
+    
 
 <a href="{{ route('products.create') }}" class="btn btn-primary">+Add Product</a>
 </div>
@@ -13,17 +13,15 @@
  
 
 <nav>
-    <h3>SHOW BY BRAND</h3>
-        <a href="{{ route('products.index') }}">ALL</a> |
-        <a href="{{ route('products.index',['brand'=> 'sunsilk'])}}">SUNSILK</a> |
-        <a href="{{ route('products.index',['brand' => 'choco']) }}">CHOCO</a> |
-        <a href="{{ route('products.index',['brand'=> 'dishwashing' ]) }}">DISWASHING</a>
-        <a href="{{ route('products.index',['brand' => 'nescafe' ]) }}">NESCAFE</a>
-        <a href="{{ route('products.index',['brand' => 'mint']) }}">MINT</a>
+   <h3>BRAND</h3>
+   <a href="{{ route('products.index') }}">ALL</a> |
+@foreach ($brands as $brand)
+   <a href="{{ route('products.index', ['brand_id' => $brand->id]) }}">{{ strtoupper($brand->name) }}</a> |
+@endforeach
 </nav>
 
 <nav>
-   <h3>SHOW BY PACKAGE</h3>
+   <h3>PACKAGE</h3>
         <a href="{{ route('products.index') }}">ALL</a> |
         <a href="{{ route('products.index',['package' => 'bottle' ]) }}">BOTTLED</a> |
         <a href="{{ route('products.index',['package' => 'plastic' ]) }}">PLASTIC</a> |
@@ -47,13 +45,13 @@
                 <td><a href="{{ route('products.show', $product['id'])}}"> {{ $product['name']}}</a></td>
                 <td>{{ $product['price'] }}</td>
                 <td>{{ $product['stock'] }}</td>
-                <td>{{ $product['brand'] }}</td>
+                <td>{{ $product->brand->name }}</td>
                 <td>{{ $product['package'] }}</td>
                 
             </tr>
         @endforeach
     </table>
-
+ 
 @endsection
 
 

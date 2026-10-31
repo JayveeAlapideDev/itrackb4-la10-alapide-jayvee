@@ -1,42 +1,42 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Brand;
 use App\Models\Product;
 use Illuminate\Http\Request;
+
 
 class ProductController extends Controller
 {
    public function featured()
     {
-        $products = $this->products();
-        $featured = $products[4];
+        
+        $brands = Brand::all();
 
-        return view('products.show', ['product'=> $featured]);
+        return view('products.create', compact('brands'));
     }
     public function index(Request $request)
     {
-        $products = Product::all();
-    return view('products.index', compact('products'));
+    $brands = Brand::all();          
 
+   
+
+    $brand = $request->query('brand_id');
+    $query = Product::with('brand');
+
+    if ($brand) {
+        $query = $query->where('brand_id', $brand);
     }
-    private function products()
-    {
-    $path = storage_path('app/products.json');
-    
-    return json_decode(file_get_contents($path), true);
+
+    $products = $query->get();
+
+    return view('products.index', compact('products', 'brands'));
     }
-    private function saveProducts($products)
-    {
-        file_put_contents(
-            storage_path('app/products.json'),
-            json_encode($products, JSON_PRETTY_PRINT)
-        );
-    }
-    
     public function create()
     {
-        return view('products.create');
+        $brands = Brand::all();
+
+        return view('products.create', compact('brands'));
     }
 
     /**
@@ -44,36 +44,22 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-      $validated = $request->validate([
-        'name' => 'required|max:100',
-        'price' => 'required|numeric|min:1|max:1000',
-        'stock' => 'required|numeric|max:1000',
-        'brand' => 'required|in:sunsilk,choco,dishwashing,nescafe,mint',
-        'package' => 'required|in:bottle,plastic,pack,sachet,stick'
-      ]);
+      
+    $validated = $request->validate([
+        'name'    => 'required|max:100',
+        'price'   => 'required|numeric|min:1|max:1000',
+        'stock'   => 'required|numeric|max:1000',
+        'brand_id'   => 'required|integer|exists:brands,id',
+        'package' => 'required|in:bottle,plastic,pack,sachet,stick',
+    ]);
 
-      $products = $this->products();
-      $id = max(array_keys($products)) +1;
+    Product::create($validated);
 
-      $products[$id] = [
-        'id' => $id,
-        'name' => $request->input('name'),
-        'price' => $request->input('price'),
-        'stock' => $request->input('stock'),
-        'brand' => $request->input('brand'),
-        'package' => $request->input('package'),
-      ];
-
-      $this->saveProducts($products);
-
-      return redirect()
-      ->route('products.index')
-      ->with('success', 'product added successfully');
+    return redirect()
+        ->route('products.index')
+        ->with('success', 'product added successfully');
     }
-
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
       $products = Product::findOrFail($id);

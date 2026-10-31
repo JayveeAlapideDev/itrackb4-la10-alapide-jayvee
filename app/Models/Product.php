@@ -3,17 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'price', 'stock', 'brand','package'];
+    protected $fillable = ['name', 'price', 'stock', 'brand_id','package'];
  
-    protected function casts(): array
+    public function brand(): BelongsTo       
     {
-        return [
-            'price' => 'integer', 
-            'stock' => 'integer' 
-        ];
+        return $this->belongsTo(Brand::class);
     }
-
 }
